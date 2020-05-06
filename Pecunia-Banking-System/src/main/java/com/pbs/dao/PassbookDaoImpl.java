@@ -1,21 +1,32 @@
 package com.pbs.dao;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.transaction.Transaction;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PassbookDaoImpl implements IPassbookDao {
+	@Autowired
+    EntityManager em;
 	
 	public List<Transaction> updatePassbook(long accountId){
-		Map<String, Transaction> transactionStore = TransactionDaoImpl.transactionStore;
-		List<Transaction> transactions = new ArrayList<>(transactionStore.values());
-		List<Transaction> result = new ArrayList<>();
-		for (Transaction transaction : transactions) {
-			if (transaction.gettransactionId().equals(accountId)) {
-				result.add(transaction);
-			}
-		}
-		return result;
+		Query query = em.createQuery("select t from Transaction t where t.accountId=:accountId");
+		query.setParameter("accountId", accountId);
+		return query.getResultList();
+	}
+	
+	public List<Transaction> accountSummary(long accountId,LocalDate startDate,LocalDate endDate){
+		Query query = em.createQuery("select t from Transaction t where t.account_id=:accountId AND t.transaction_date BETWEEN :startDate AND :endDate");
+		query.setParameter("accountId", accountId);
+		query.setParameter("startDate", startDate);
+		query.setParameter("endDate", endDate);
+		
+		List<Transaction> transactions = query.getResultList();
+		return transactions;
 	}
 
 }

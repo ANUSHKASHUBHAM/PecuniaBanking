@@ -1,9 +1,14 @@
 package com.pbs.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
-public interface IPassbookDao {
+import javax.transaction.Transaction;
 
-	public List<Transaction> updatePassbook(long accountId);
+public interface IPassbookDao {
+	
+	List<Transaction> updatePassbook(long accountId);
+	List<Transaction> accountSummary(long accountId,LocalDate startDate,LocalDate endDate);
+
 	
 }
